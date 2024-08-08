@@ -26,26 +26,50 @@ func main() {
 	projectPath = os.Args[1]
 
 	fmt.Printf("\n\n%s\n\n", kHeader)
-	os.Mkdir(projectPath, mkdirPerms)
-	os.Chdir(projectPath)
+	err := os.Mkdir(projectPath, mkdirPerms)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
-	os.Mkdir("app", mkdirPerms)
-	os.Mkdir("app/src", mkdirPerms)
+	err = os.Chdir(projectPath)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
-	os.Create("app/prj.conf")
-
-	// filepath.Walk("template")
-	i, _ := templateFs.ReadDir("template")
-	for _, file := range i {
+	templateFiles, err := templateFs.ReadDir("template")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	for _, file := range templateFiles {
 		if file.Type().IsRegular() {
-			copyTemplateFile(file)
+			err = copyTemplateFile(file)
+			if err != nil {
+				fmt.Println(err)
+			}
 		}
 	}
 
-	runCmd("git", "init")
-	runCmd("python3", "-m", "venv", ".venv")
-	runCmd("source", ".venv/bin/activate")
-	runCmd("python3", "-m", "pip", "install", "west")
+	err = runCmd("git", "init")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = runCmd("python3", "-m", "venv", ".venv")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	pythonExe := ".venv/bin/python3"
+	err = runCmd(pythonExe, "-m", "pip", "install", "west")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
 	fmt.Printf("\n\n%s\n\n", kHeader)
 	fmt.Println("Project setup complete!")
@@ -72,15 +96,27 @@ func replaceKeyWords(b []byte) (ret []byte, err error) {
 }
 
 // Copy template files from template dir to project dir
-func copyTemplateFile(file os.DirEntry) {
-	content, _ := templateFs.ReadFile("template/" + file.Name())
-	content, _ = replaceKeyWords(content)
+func copyTemplateFile(file os.DirEntry) error {
+	content, err := templateFs.ReadFile("template/" + file.Name())
+	if err != nil {
+		return err
+	}
+	content, err = replaceKeyWords(content)
+	if err != nil {
+		return err
+	}
 
 	filePath := bytes.ReplaceAll([]byte(file.Name()), []byte(".template"), []byte(""))
 	filePath = bytes.ReplaceAll(filePath, []byte("DOT_"), []byte("."))
 	filePath = bytes.ReplaceAll(filePath, []byte("@"), []byte("/"))
 
-	os.WriteFile(string(filePath), content, touchPerms)
+	os.Mkdir(path.Dir(string(filePath)), mkdirPerms)
+
+	err = os.WriteFile(string(filePath), content, touchPerms)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // Wrapper around exec.Command to start, attach and print output of the command
@@ -93,14 +129,11 @@ func runCmd(command string, arg ...string) error {
 		return err
 	}
 
-	err = cmd.Start()
-	if err != nil {
-		return err
-	}
+	cmd.Start()
 	for {
 		tmp := make([]byte, 1024)
 		_, err := stdout.Read(tmp)
-		fmt.Print(string(tmp))
+		fmt.Println(string(tmp))
 		if err != nil {
 			break
 		}
