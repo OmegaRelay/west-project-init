@@ -9,7 +9,16 @@ import (
 	"path"
 )
 
-const kHeader = "================================================================================="
+const kHeader = `  
+   =============    ========   ====     ||     ||  \\      //   ====     
+            //	  ||          ||    \\  ||     ||   \\    //   ||    \\  
+          //      ||          ||    ||  ||     ||    \\  //    ||    ||  
+        //        ||======    ||===//   ||=====||     \\//     ||===//    
+      //          ||          ||        ||     ||      ||      ||\\       
+    //            ||          ||        ||     ||      ||      ||  \\     
+   =============    ========  ||        ||     ||      ||      ||   \\  `
+
+const kDivider = "================================================================================="
 
 var (
 	mkdirPerms os.FileMode = 0777
@@ -25,7 +34,9 @@ func main() {
 
 	projectPath = os.Args[1]
 
-	fmt.Printf("\n\n%s\n\n", kHeader)
+	fmt.Printf("\n\n%s\n\n", kDivider)
+	fmt.Printf("%s", kHeader)
+	fmt.Printf("\n\n%s\n\n", kDivider)
 	err := os.Mkdir(projectPath, mkdirPerms)
 	if err != nil {
 		fmt.Println(err)
@@ -71,7 +82,7 @@ func main() {
 		return
 	}
 
-	fmt.Printf("\n\n%s\n\n", kHeader)
+	fmt.Printf("\n\n%s\n\n", kDivider)
 	fmt.Println("Project setup complete!")
 	fmt.Println("Now setup app/west.yml, run make bootstrap, and make something cool with Zephyr")
 }
