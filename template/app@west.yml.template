@@ -1,0 +1,34 @@
+manifest:
+  self:
+    west-commands: scripts/west-commands.yml
+
+  # Remotes to pull from, Zephyr and NCS included as example
+  remotes:
+    - name: zephyr-rtos
+      url-base: https://github.com/zephyrproject-rtos
+    - name: ncs
+      url-base: https://github.com/nrfconnect
+
+  defaults:
+    remote: zephyr-rtos
+
+
+  # Define external projects to include here
+  projects:
+    - name: zephyr
+      repo-path: zephyr
+      remote: zephyr-rtos
+      revision: main # Set desired version tag
+      import:
+        path-prefix: external
+        name-allowlist:
+          - zephyr 
+
+    # - name: ncs
+    #   repo-path: nrf-sdk
+    #   remote: ncs
+    #   revision: main
+    #   import:
+    #     path-prefix: third_party
+    #     name-allowlist:
+    #       - zephyr 
