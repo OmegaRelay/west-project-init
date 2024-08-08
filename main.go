@@ -31,10 +31,19 @@ var (
 var templateFs embed.FS
 
 func main() {
+	if len(os.Args) < 2 {
+		fmt.Println("Error, must provide project name")
+		return
+	}
 
 	projectPath = os.Args[1]
 
-	fmt.Printf("\n\n%s\n\n", kDivider)
+	if projectPath == "" {
+		fmt.Println("Error, must provide project name")
+		return
+	}
+
+	fmt.Printf("\n\n%s\n", kDivider)
 	fmt.Printf("%s", kHeader)
 	fmt.Printf("\n\n%s\n\n", kDivider)
 	err := os.Mkdir(projectPath, mkdirPerms)
