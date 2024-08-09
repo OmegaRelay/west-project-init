@@ -1,4 +1,4 @@
-name: Go
+name: go build
 
 on:
   workflow_call:
@@ -27,13 +27,10 @@ jobs:
     - name: Build
       run: go build -o wpi_${GOOS}_${GOARCH}/
 
-
-
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.3.6
       with:
         name: wpi_${{ env.GOOS }}_${{ env.GOARCH }}
         path: wpi_${{ env.GOOS }}_${{ env.GOARCH }}
         if-no-files-found: "error"
-       
             
