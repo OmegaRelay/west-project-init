@@ -1,0 +1,13 @@
+name: build
+
+on:
+  push:
+    branches: [ "main" ]
+
+
+jobs:
+  build-macos-arm:
+    uses: ./.github/workflows/go-build.yml
+    with:
+      target_os: darwin
+      target_arch: arm64
