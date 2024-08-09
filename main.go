@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"embed"
+	"flag"
 	"fmt"
 	"os"
 	"os/exec"
@@ -30,15 +31,42 @@ var (
 //go:embed template
 var templateFs embed.FS
 
+//go:embed VERSION
+var version string
+
+var (
+	versionFlag bool
+	verboseFlag bool
+)
+
 func main() {
-	if len(os.Args) < 2 {
+	flag.BoolVar(&versionFlag, "V", false, "Print the version")
+	flag.BoolVar(&verboseFlag, "v", false, "Print more to terminal")
+	flag.Parse()
+
+	if versionFlag {
+		fmt.Println("v" + version)
+		os.Exit(0)
+	}
+
+	args := flag.Args()
+	println(os.Args)
+	println(flag.Args())
+
+	if len(args) == 0 {
 		fmt.Println("Error, must provide project name")
 		return
 	}
 
-	projectPath = os.Args[1]
+	// the first positional argument is the directory to initialise
+	projectPath := args[0]
 
-	if projectPath == "" {
+	initDir(projectPath)
+
+}
+
+func initDir(dirPath string) {
+	if dirPath == "" {
 		fmt.Println("Error, must provide project name")
 		return
 	}
@@ -46,13 +74,13 @@ func main() {
 	fmt.Printf("\n\n%s\n", kDivider)
 	fmt.Printf("%s", kHeader)
 	fmt.Printf("\n\n%s\n\n", kDivider)
-	err := os.Mkdir(projectPath, mkdirPerms)
+	err := os.Mkdir(dirPath, mkdirPerms)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	err = os.Chdir(projectPath)
+	err = os.Chdir(dirPath)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -150,12 +178,14 @@ func runCmd(command string, arg ...string) error {
 	}
 
 	cmd.Start()
-	for {
-		tmp := make([]byte, 1024)
-		_, err := stdout.Read(tmp)
-		fmt.Println(string(tmp))
-		if err != nil {
-			break
+	if verboseFlag {
+		for {
+			tmp := make([]byte, 1024)
+			_, err := stdout.Read(tmp)
+			fmt.Println(string(tmp))
+			if err != nil {
+				break
+			}
 		}
 	}
 	return nil
