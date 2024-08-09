@@ -1,0 +1,15 @@
+image: golang:latest
+
+build:
+  stage: build
+  script:
+    - go build -o out/
+  artifacts:
+    paths:
+      - out
+  rules:
+    # Only push when committed to the main branch
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+
+stages:
+  - build
