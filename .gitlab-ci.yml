@@ -2,6 +2,9 @@ image: golang:latest
 
 build:
   stage: build
+  variables:
+    GOOS: darwin
+    GOARCH: arm64
   script:
     - go build -o out/
   artifacts:
