@@ -19,6 +19,18 @@
                 "kind": "build",
                 "isDefault": true
             },
+        },
+        {
+            "type": "shell",
+            "label": "delete_tmp_app",
+            "command": "rm",
+            "args": [
+                "-rf",
+                "tmp_app",
+            ],
+            "options": {
+              "cwd": "${workspaceFolder}"
+            },
         }
     ]
 }

@@ -27,3 +27,9 @@ go.sum
 
 # Go output
 out/
+
+# Delve tmp file
+__debug_bin*
+
+# test project
+tmp_app/
