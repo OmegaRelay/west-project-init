@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"syscall"
 
 	flag "github.com/spf13/pflag"
 )
@@ -66,8 +67,10 @@ func initDir(dirPath string) {
 	fmt.Printf("\n\n%s\n\n", kDivider)
 	err := os.Mkdir(dirPath, mkdirPerms)
 	if err != nil {
-		fmt.Println(err)
-		return
+		if e, ok := err.(*os.PathError); ok && e.Err != syscall.EEXIST {
+			fmt.Println(err)
+			return
+		}
 	}
 
 	err = os.Chdir(dirPath)
@@ -111,7 +114,7 @@ func initDir(dirPath string) {
 
 	fmt.Printf("\n\n%s\n\n", kDivider)
 	fmt.Println("Project setup complete!")
-	fmt.Println("Now setup app/west.yml, run make bootstrap, and make something cool with Zephyr")
+	fmt.Println("Now setup app/west.yml, and run make bootstrap")
 }
 
 // Keywords within @@ symbols are replaced with dynamic components
