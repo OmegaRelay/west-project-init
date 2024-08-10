@@ -3,11 +3,12 @@ package main
 import (
 	"bytes"
 	"embed"
-	"flag"
 	"fmt"
 	"os"
 	"os/exec"
 	"path"
+
+	flag "github.com/spf13/pflag"
 )
 
 const kHeader = `  
@@ -34,24 +35,12 @@ var templateFs embed.FS
 //go:embed VERSION
 var version string
 
-var (
-	versionFlag bool
-	verboseFlag bool
-)
+var gVerboseFlag bool
 
 func main() {
-	flag.BoolVar(&versionFlag, "V", false, "Print the version")
-	flag.BoolVar(&verboseFlag, "v", false, "Print more to terminal")
-	flag.Parse()
-
-	if versionFlag {
-		fmt.Println("v" + version)
-		os.Exit(0)
-	}
+	parseFlags()
 
 	args := flag.Args()
-	println(os.Args)
-	println(flag.Args())
 
 	if len(args) == 0 {
 		fmt.Println("Error, must provide project name")
@@ -178,7 +167,7 @@ func runCmd(command string, arg ...string) error {
 	}
 
 	cmd.Start()
-	if verboseFlag {
+	if gVerboseFlag {
 		for {
 			tmp := make([]byte, 1024)
 			_, err := stdout.Read(tmp)
@@ -189,4 +178,31 @@ func runCmd(command string, arg ...string) error {
 		}
 	}
 	return nil
+}
+
+func parseFlags() {
+	flag.BoolVarP(&gVerboseFlag, "verbose", "v", false, "Print more to terminal")
+
+	versionFlag := flag.BoolP("version", "V", false, "Print the version")
+	helpFlag := flag.BoolP("help", "h", false, "Print this help message")
+	flag.Parse()
+
+	if *helpFlag {
+		printHelp()
+		os.Exit(0)
+	}
+
+	if *versionFlag {
+		fmt.Println("v" + version)
+		os.Exit(0)
+	}
+
+}
+
+func printHelp() {
+	fmt.Printf("\nSets up a west project in the given directory\n")
+	fmt.Printf("\nUsage:\n")
+	fmt.Printf("\twest_project_init [flags] [path to project to setup]\n")
+	fmt.Printf("\nFlags:\n")
+	flag.PrintDefaults()
 }
