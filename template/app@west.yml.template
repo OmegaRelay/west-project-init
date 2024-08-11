@@ -25,10 +25,10 @@ manifest:
           - zephyr 
 
     # - name: ncs
-    #   repo-path: nrf-sdk
+    #   repo-path: sdk-nrf
     #   remote: ncs
     #   revision: main
     #   import:
-    #     path-prefix: third_party
+    #     path-prefix: external
     #     name-allowlist:
     #       - zephyr 
