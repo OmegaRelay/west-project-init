@@ -51,6 +51,7 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+build/
 .DS_store/
 external/
 .venv/
