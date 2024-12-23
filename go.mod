@@ -1,4 +1,4 @@
-module github.com/OmegaRelay/west_project_init
+module github.com/OmegaRelay/west-project-init
 
 go 1.20
 
