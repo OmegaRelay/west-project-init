@@ -204,9 +204,24 @@ func parseFlags() {
 }
 
 func printHelp() {
-	fmt.Printf("\nSets up a west project in the given directory\n")
-	fmt.Printf("\nUsage:\n")
-	fmt.Printf("\twest_project_init [flags] [path to project to setup]\n")
-	fmt.Printf("\nFlags:\n")
+	fmt.Printf(`
+Create and Set up a new West project in the given directory. 
+Will initialise a git directory with a python virtual environment and makefile 
+for building with the Zephyr RTOS using West.
+
+Once created, the new directory has a makefile where "make bootstrap" can be 
+used to clone the Zephyr project into the directory under the "third-party" 
+directory.
+
+Alternatively, "source .venv/bin/activate" can be used to gain access a python 
+virtual environment with the west tool.
+
+
+Usage:
+	%s [flags] <project-path>"
+	
+Flags:
+`, os.Args[0])
+
 	flag.PrintDefaults()
 }

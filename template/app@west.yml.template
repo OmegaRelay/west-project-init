@@ -20,7 +20,7 @@ manifest:
       remote: zephyr-rtos
       revision: main # Set desired version tag
       import:
-        path-prefix: external
+        path-prefix: third-party
         name-allowlist:
           - zephyr 
 
@@ -29,6 +29,6 @@ manifest:
     #   remote: ncs
     #   revision: main
     #   import:
-    #     path-prefix: external
+    #     path-prefix: third-party
     #     name-allowlist:
     #       - zephyr 
