@@ -37,7 +37,9 @@ var templateFs embed.FS
 //go:embed VERSION
 var version string
 
-var gVerboseFlag bool
+var pythonRequirements = []string{
+	"west", "pyelftools", "pyintelhex", "pyserial",
+}
 
 func main() {
 	parseFlags()
@@ -105,11 +107,13 @@ func initDir(dirPath string) {
 		return
 	}
 
-	pythonExe := ".venv/bin/python3"
-	err = runCmd(pythonExe, "-m", "pip", "install", "west")
-	if err != nil {
-		fmt.Println(err)
-		return
+	pipExe := ".venv/bin/pip"
+	for _, requirement := range pythonRequirements {
+		err = runCmd(pipExe, "install", requirement)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 	}
 
 	fmt.Printf("\n\n%s\n\n", kDivider)
@@ -171,22 +175,18 @@ func runCmd(command string, arg ...string) error {
 	}
 
 	cmd.Start()
-	if gVerboseFlag {
-		for {
-			tmp := make([]byte, 1024)
-			_, err := stdout.Read(tmp)
-			fmt.Println(string(tmp))
-			if err != nil {
-				break
-			}
+	for {
+		tmp := make([]byte, 1024)
+		_, err := stdout.Read(tmp)
+		fmt.Println(string(tmp))
+		if err != nil {
+			break
 		}
 	}
 	return nil
 }
 
 func parseFlags() {
-	flag.BoolVarP(&gVerboseFlag, "verbose", "v", false, "Print more to terminal")
-
 	versionFlag := flag.BoolP("version", "V", false, "Print the version")
 	helpFlag := flag.BoolP("help", "h", false, "Print this help message")
 	flag.Parse()
