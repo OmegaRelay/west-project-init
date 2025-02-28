@@ -38,7 +38,7 @@ var templateFs embed.FS
 var version string
 
 var pythonRequirements = []string{
-	"west", "pyelftools", "pyintelhex", "pyserial",
+	"west", "pyelftools", "intelhex", "pyserial",
 }
 
 func main() {
