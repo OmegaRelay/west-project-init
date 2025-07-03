@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"embed"
 	"fmt"
+	"io/fs"
 	"os"
 	"os/exec"
 	"path"
@@ -20,13 +21,13 @@ const kHeader = `
         \\  //\\  //      ||                 \\         ||
          \\//  \\//       ||          \\     ||         ||
           \/    \/         ========     =====           ||
-   `
+`
 
 const kDivider = "================================================================================="
 
 var (
 	mkdirPerms os.FileMode = 0777
-	touchPerms os.FileMode = 0666
+	touchPerms os.FileMode = 0664
 
 	projectPath string = ""
 )
@@ -55,12 +56,11 @@ func main() {
 	projectPath := args[0]
 
 	initDir(projectPath)
-
 }
 
 func initDir(dirPath string) {
 	if dirPath == "" {
-		fmt.Println("Error, must provide project name")
+		fmt.Println("Error: must provide project name")
 		return
 	}
 
@@ -81,19 +81,15 @@ func initDir(dirPath string) {
 		return
 	}
 
-	templateFiles, err := templateFs.ReadDir("template")
+	templateContents, err := templateFs.ReadDir("template")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	for _, file := range templateFiles {
-		if file.Type().IsRegular() {
-			err = copyTemplateFile(file)
-			if err != nil {
-				fmt.Println(err)
-			}
-		}
-	}
+
+	fmt.Printf("Copying template directory...\n")
+	copyTemplateContents("", templateContents)
+	fmt.Printf("\n\n")
 
 	err = runCmd("git", "init")
 	if err != nil {
@@ -116,9 +112,17 @@ func initDir(dirPath string) {
 		}
 	}
 
+	err = runCmd(".venv/bin/west", "init", "-l", "zephyr")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
 	fmt.Printf("\n\n%s\n\n", kDivider)
-	fmt.Println("Project setup complete!")
-	fmt.Println("Now setup app/west.yml, and run make bootstrap")
+	fmt.Printf("Project setup complete!\n\n")
+	fmt.Printf("Add required third party projects through zephyr/west.yml\n")
+	fmt.Printf("Run `source .venv/bin/activate` to set the project's virtual environment\n")
+	fmt.Printf("Run `west update` to update the project\n")
 }
 
 // Keywords within @@ symbols are replaced with dynamic components
@@ -140,28 +144,44 @@ func replaceKeyWords(b []byte) (ret []byte, err error) {
 	return
 }
 
-// Copy template files from template dir to project dir
-func copyTemplateFile(file os.DirEntry) error {
-	content, err := templateFs.ReadFile("template/" + file.Name())
-	if err != nil {
-		return err
+func copyTemplateContents(path string, entries []fs.DirEntry) {
+	for _, entry := range entries {
+		if entry.Type().IsDir() {
+			var dirPath string
+			if path == "" {
+				dirPath = entry.Name()
+			} else {
+				dirPath = path + "/" + entry.Name()
+			}
+			fmt.Printf("%s\n", dirPath)
+			os.Mkdir(dirPath, mkdirPerms)
+			entryContents, err := templateFs.ReadDir("template/" + dirPath)
+			if err != nil {
+				panic(err)
+			}
+			copyTemplateContents(dirPath, entryContents)
+		} else if entry.Type().IsRegular() {
+			var filePath string
+			if path == "" {
+				filePath = entry.Name()
+			} else {
+				filePath = path + "/" + entry.Name()
+			}
+			fmt.Printf("%s\n", filePath)
+			content, err := templateFs.ReadFile("template/" + filePath)
+			if err != nil {
+				panic(err)
+			}
+			content, err = replaceKeyWords(content)
+			if err != nil {
+				panic(err)
+			}
+			err = os.WriteFile(filePath, content, touchPerms)
+			if err != nil {
+				panic(err)
+			}
+		}
 	}
-	content, err = replaceKeyWords(content)
-	if err != nil {
-		return err
-	}
-
-	filePath := bytes.ReplaceAll([]byte(file.Name()), []byte(".template"), []byte(""))
-	filePath = bytes.ReplaceAll(filePath, []byte("DOT_"), []byte("."))
-	filePath = bytes.ReplaceAll(filePath, []byte("@"), []byte("/"))
-
-	os.Mkdir(path.Dir(string(filePath)), mkdirPerms)
-
-	err = os.WriteFile(string(filePath), content, touchPerms)
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 // Wrapper around exec.Command to start, attach and print output of the command
