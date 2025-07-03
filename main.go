@@ -14,16 +14,33 @@ import (
 )
 
 const kHeader = `  
-    \\                //   ========     =====     ==============
-     \\              //   ||          ||     \\         ||
-      \\            //    ||          \\                ||
-       \\    __    //     ||======      =====           ||
-        \\  //\\  //      ||                 \\         ||
-         \\//  \\//       ||          \\     ||         ||
-          \/    \/         ========     =====           ||
+
+     __    __          _         
+    / / /\ \ \___  ___| |_       
+    \ \/  \/ / _ \/ __| __|      
+     \  /\  /  __/\__ \ |_       
+      \/  \/ \___||___/\__|      
+                                 
+______          _           _   
+| ___ \        (_)         | |  
+| |_/ / __ ___  _  ___  ___| |_ 
+|  __/ '__/ _ \| |/ _ \/ __| __|
+| |  | | | (_) | |  __/ (__| |_ 
+\_|  |_|  \___/| |\___|\___|\__|
+              _/ |              
+             |__/               
+       _____      _ _           
+      |_   _|    (_) |          
+        | | _ __  _| |_         
+        | || '_ \| | __|        
+       _| || | | | | |_         
+       \___/_| |_|_|\__|        
+
 `
 
-const kDivider = "================================================================================="
+const kDivider = `
+===============================================================================
+`
 
 var (
 	mkdirPerms os.FileMode = 0777
@@ -64,9 +81,7 @@ func initDir(dirPath string) {
 		return
 	}
 
-	fmt.Printf("\n\n%s\n", kDivider)
-	fmt.Printf("%s", kHeader)
-	fmt.Printf("\n\n%s\n\n", kDivider)
+	fmt.Printf("%s%s", kHeader, kDivider)
 	err := os.Mkdir(dirPath, mkdirPerms)
 	if err != nil {
 		if e, ok := err.(*os.PathError); ok && e.Err != syscall.EEXIST {
@@ -118,7 +133,7 @@ func initDir(dirPath string) {
 		return
 	}
 
-	fmt.Printf("\n\n%s\n\n", kDivider)
+	fmt.Printf("%s", kDivider)
 	fmt.Printf("Project setup complete!\n\n")
 	fmt.Printf("Add required third party projects through zephyr/west.yml\n")
 	fmt.Printf("Run `source .venv/bin/activate` to set the project's virtual environment\n")
