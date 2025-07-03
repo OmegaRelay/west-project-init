@@ -32,7 +32,7 @@ var (
 	projectPath string = ""
 )
 
-//go:embed template
+//go:embed template/*
 var templateFs embed.FS
 
 //go:embed VERSION
