@@ -146,29 +146,22 @@ func replaceKeyWords(b []byte) (ret []byte, err error) {
 
 func copyTemplateContents(path string, entries []fs.DirEntry) {
 	for _, entry := range entries {
+		var entryPath string
+		if path == "" {
+			entryPath = entry.Name()
+		} else {
+			entryPath = path + "/" + entry.Name()
+		}
 		if entry.Type().IsDir() {
-			var dirPath string
-			if path == "" {
-				dirPath = entry.Name()
-			} else {
-				dirPath = path + "/" + entry.Name()
-			}
-			fmt.Printf("%s\n", dirPath)
-			os.Mkdir(dirPath, mkdirPerms)
-			entryContents, err := templateFs.ReadDir("template/" + dirPath)
+			os.Mkdir(entryPath, mkdirPerms)
+			entryContents, err := templateFs.ReadDir("template/" + entryPath)
 			if err != nil {
 				panic(err)
 			}
-			copyTemplateContents(dirPath, entryContents)
+			copyTemplateContents(entryPath, entryContents)
 		} else if entry.Type().IsRegular() {
-			var filePath string
-			if path == "" {
-				filePath = entry.Name()
-			} else {
-				filePath = path + "/" + entry.Name()
-			}
-			fmt.Printf("%s\n", filePath)
-			content, err := templateFs.ReadFile("template/" + filePath)
+			fmt.Printf("%s\n", entryPath)
+			content, err := templateFs.ReadFile("template/" + entryPath)
 			if err != nil {
 				panic(err)
 			}
@@ -176,7 +169,7 @@ func copyTemplateContents(path string, entries []fs.DirEntry) {
 			if err != nil {
 				panic(err)
 			}
-			err = os.WriteFile(filePath, content, touchPerms)
+			err = os.WriteFile(entryPath, content, touchPerms)
 			if err != nil {
 				panic(err)
 			}
