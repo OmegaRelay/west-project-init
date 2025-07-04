@@ -6,12 +6,12 @@ on:
 
 
 jobs:
-  build-macos-arm:
+  build-macos-arm64:
     uses: ./.github/workflows/go-build.yml
     with:
       target_os: darwin
       target_arch: arm64
-  build-macos-intel:
+  build-macos-x64:
     uses: ./.github/workflows/go-build.yml
     with:
       target_os: darwin
@@ -39,7 +39,7 @@ jobs:
       target_os: linux
       target_arch: 386
 
-  build-windows-arm:
+  build-windows-arm64:
     uses: ./.github/workflows/go-build.yml
     with:
       target_os: windows
