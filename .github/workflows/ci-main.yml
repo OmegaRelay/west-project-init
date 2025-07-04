@@ -69,7 +69,10 @@ jobs:
     name: bundle_main
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
-        uses: actions/checkout@v4
+      - name: download artifacts
+        uses: actions/download@v4
+        with: 
+          name: bin
+          path: bin
       - name: print
         run: ls 
