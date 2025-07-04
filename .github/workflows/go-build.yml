@@ -25,12 +25,12 @@ jobs:
         go-version: '1.20'
 
     - name: Build
-      run: go build -o wpi_${GOOS}_${GOARCH}/
+      run: go build -o ${GOOS}-${GOARCH}/
 
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.3.6
       with:
-        name: wpi_${{ env.GOOS }}_${{ env.GOARCH }}
-        path: wpi_${{ env.GOOS }}_${{ env.GOARCH }}
+        name: ${{ env.GOOS }}-${{ env.GOARCH }}
+        path: ${{ env.GOOS }}-${{ env.GOARCH }}
         if-no-files-found: "error"
             
