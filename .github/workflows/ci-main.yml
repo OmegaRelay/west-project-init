@@ -17,7 +17,13 @@ jobs:
       target_os: darwin
       target_arch: amd64
 
+
   build-linux-arm:
+    uses: ./.github/workflows/go-build.yml
+    with:
+      target_os: linux
+      target_arch: arm
+  build-linux-arm64:
     uses: ./.github/workflows/go-build.yml
     with:
       target_os: linux
