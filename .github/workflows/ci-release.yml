@@ -90,8 +90,43 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
+  upload_macos_arm64:
+    name: Upload Darwin/Arm64
+    needs:
+      - create_release
+    uses: ./.github/workflows/add-artifact-to-release.yml
+    with:
+      release_upload_url: ${{ needs.create_release.outputs.upload_url }}
+      artifact_name: darwin-arm64
 
-  upload_linux_amd64:
+  upload_macos_x64:
+    name: Upload Darwin/Amd64
+    needs:
+      - create_release
+    uses: ./.github/workflows/add-artifact-to-release.yml
+    with:
+      release_upload_url: ${{ needs.create_release.outputs.upload_url }}
+      artifact_name: darwin-amd64
+
+  upload_linux_arm64:
+    name: Upload Linux/Arm64
+    needs:
+      - create_release
+    uses: ./.github/workflows/add-artifact-to-release.yml
+    with:
+      release_upload_url: ${{ needs.create_release.outputs.upload_url }}
+      artifact_name: linux-arm64
+
+  upload_linux_arm:
+    name: Upload Linux/Arm
+    needs:
+      - create_release
+    uses: ./.github/workflows/add-artifact-to-release.yml
+    with:
+      release_upload_url: ${{ needs.create_release.outputs.upload_url }}
+      artifact_name: linux-arm
+
+  upload_linux_x64:
     name: Upload Linux/Amd64
     needs:
       - create_release
@@ -99,3 +134,40 @@ jobs:
     with:
       release_upload_url: ${{ needs.create_release.outputs.upload_url }}
       artifact_name: linux-amd64
+
+  upload_linux_x86:
+    name: Upload Linux/386
+    needs:
+      - create_release
+    uses: ./.github/workflows/add-artifact-to-release.yml
+    with:
+      release_upload_url: ${{ needs.create_release.outputs.upload_url }}
+      artifact_name: linux-386
+
+  upload_windows_arm64:
+    name: Upload Windows/Arm64
+    needs:
+      - create_release
+    uses: ./.github/workflows/add-artifact-to-release.yml
+    with:
+      release_upload_url: ${{ needs.create_release.outputs.upload_url }}
+      artifact_name: windows-arm64
+
+  upload_windows_x64:
+    name: Upload Windows/Amd64
+    needs:
+      - create_release
+    uses: ./.github/workflows/add-artifact-to-release.yml
+    with:
+      release_upload_url: ${{ needs.create_release.outputs.upload_url }}
+      artifact_name: windows-amd64
+
+  upload_windows_x86:
+    name: Upload Windows/386
+    needs:
+      - create_release
+    uses: ./.github/workflows/add-artifact-to-release.yml
+    with:
+      release_upload_url: ${{ needs.create_release.outputs.upload_url }}
+      artifact_name: windows-386
+
