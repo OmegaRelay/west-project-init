@@ -29,8 +29,8 @@ jobs:
         uses: a7ul/tar-action@v1.1.0
         with:
           command: c
-          files:
-            - ./${{ inputs.artifact_name }}
+          files: |
+            ./${{ inputs.artifact_name }}
           outPath: west-project-init-${{ inputs.artifact_name }}.tar.gz
 
       - name: upload ${{ inputs.artifact_name }} artifact
