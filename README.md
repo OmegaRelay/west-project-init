@@ -31,6 +31,14 @@
 </div>
 
 
+## Changelog
+
+All notable changes to this project will be documented in this CHANGELOG.md file.
+ 
+The format is based on [Keep a Changelog](http://keepachangelog.com/)
+and this project adheres to [Semantic Versioning](http://semver.org/).
+
+
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [contributors-shield]: https://img.shields.io/github/contributors/OmegaRelay/west-project-init.svg?style=for-the-badge
