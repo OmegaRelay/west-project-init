@@ -69,6 +69,8 @@ jobs:
       - build-windows-x64
       - build-windows-x86
     runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -95,5 +97,5 @@ jobs:
       - create_release
     uses: ./.github/workflows/add-artifact-to-release.yml
     with:
-      release_upload_url: ${{ steps.create_release.outputs.upload_url }}
+      release_upload_url: ${{ needs.create_release.outputs.upload_url }}
       artifact_name: linux-amd64
