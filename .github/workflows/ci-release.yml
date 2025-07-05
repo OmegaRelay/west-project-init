@@ -93,27 +93,7 @@ jobs:
     name: Upload Linux/Amd64
     needs:
       - create_release
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: download linux/amd64 artifact
-        uses: actions/download@v4
-        with: 
-          name: linux-amd64
-          path: linux-amd64
-      - name: ls dir
-        run: ls
-      # - name: upload linux amd64 artifact
-      #   id: upload_linux_amd64
-      #   uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ github.token }}
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_path: ./bin/west-project-init-linux-amd64.tar.gz
-      #     asset_name: west-project-init-linux-amd64.tar.gz
-      #     asset_content_type: application/gzip
-
+    uses: ./.github/workflows/add-artifact-to-release.yml
+    with:
+      release_upload_url: ${{ steps.create_release.outputs.upload_url }}
+      artifact_name: linux-amd64
