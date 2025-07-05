@@ -30,7 +30,7 @@ jobs:
         with:
           command: c
           files: |
-            ./${{ inputs.artifact_name }}
+            ./${{ inputs.artifact_name }}/*
           outPath: west-project-init-${{ inputs.artifact_name }}.tar.gz
 
       - name: upload ${{ inputs.artifact_name }} artifact
